@@ -1,33 +1,10 @@
 import boto3
 import os
-import time
 
 
 # Initialize EC2 resource and client
 ec2 = boto3.resource('ec2')
 client = boto3.client('ec2')
-
-# Function to check if a key pair exists, if not create a new one
-def check_or_create_pem(key_name="my-key-pair"):
-    try:
-        response = client.describe_key_pairs(KeyNames=[key_name])
-        print(f"Key pair {key_name} already exists.")
-        return key_name
-    except client.exceptions.ClientError as e:
-        if 'InvalidKeyPair.NotFound' in str(e):
-            print(f"Key pair {key_name} not found, creating a new one.")
-            # Create a new key pair
-            key_pair = client.create_key_pair(KeyName=key_name)
-            # Save the PEM file
-            pem_file_path = f'~/.ssh/{key_name}.pem'
-            with open(os.path.expanduser(pem_file_path), 'w') as file:
-                file.write(key_pair['KeyMaterial'])
-            os.chmod(os.path.expanduser(pem_file_path), 0o400)  # Set file permissions
-            print(f"Key pair {key_name} created and saved to {pem_file_path}")
-            return key_name
-        else:
-            raise e
-
 
 # Function to launch an EC2 instance
 def launch_instance(ami_id, key_name, security_group_id, subnet_id):
@@ -121,8 +98,8 @@ def get_latest_ami():
 
 # Main workflow
 def main():
-    # Check or create PEM file
-    key_name = check_or_create_pem()
+    # Define the key name
+    key_name = "vockey"
 
     # Get default VPC and check/create security group
     vpc_id = get_default_vpc()
@@ -134,12 +111,6 @@ def main():
     # Find an AMI and launch the instance
     ami_id = get_latest_ami()
     instance = launch_instance(ami_id, key_name, security_group_id, subnet_id)  
-    
-    
-    # Ask if the user wants to connect to the instance via SSH
-    connect = input("Do you want to connect to the EC2 instance? (Y/N): ").strip().upper()
-    if connect == 'Y':
-        os.system(f"ssh -i ~/.ssh/{key_name}.pem ec2-user@{instance.public_ip_address}")
 
 if __name__ == '__main__':
     main()
