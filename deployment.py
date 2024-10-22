@@ -51,16 +51,6 @@ def launch_instance(ami_id, key_name, security_group_id, subnet_id):
     print(f"Instance {instance.id} launched.")
     instance.wait_until_running()
     instance.load()  # Refresh instance data
-    
-    # Wait for User Data script to complete
-    while True:
-        console_output = client.get_console_output(InstanceId=instance.id)
-        if console_output['Output'] and ('Complete' in console_output['Output'] or 'Failed' in console_output['Output']):
-            print("User Data script has completed.")
-            break
-        print("Waiting for User Data script to complete...")
-        time.sleep(30)  # Wait for 30 seconds before checking again
-    
     return instance
 
 
