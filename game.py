@@ -58,12 +58,29 @@ def save_pokemon_to_file(pokemon_details, file_path="pokemon_data.json"):
 def print_pokemon_details(pokemon):
     print(f"Name: {pokemon['name']}, Height: {pokemon['height']}, Weight: {pokemon['weight']}")
 
+# Function to display all saved Pokémon
+def display_saved_pokemon(file_path="pokemon_data.json"):
+    try:
+        with open(file_path, 'r') as file:
+            pokemon_data = json.load(file)
+            print("\nSaved Pokémon:")
+            for idx, pokemon in enumerate(pokemon_data, start=1):
+                print(f"{idx}. Name: {pokemon['name']}, Height: {pokemon['height']}, Weight: {pokemon['weight']}")
+    except FileNotFoundError:
+        print("\nNo Pokémon saved yet.")
+
 # Main function to run the game
 def main():
     print("Welcome to the Pokémon game!")
     while True:
-        user_input = input("\nDo you want to draw a Pokémon? Y/N: ").strip().upper()
-        if user_input == "Y":
+        print("\nOptions:")
+        print("1. Draw a Pokémon")
+        print("2. View all saved Pokémon")
+        print("3. Exit")
+        
+        user_input = input("Choose an option (1/2/3): ").strip()
+        
+        if user_input == "1":
             print("Game start!")
             pokemon_list = fetch_pokemon_list(limit=5)  # Fetch a list of Pokémon
             if pokemon_list:
@@ -90,11 +107,13 @@ def main():
                     print(f"\nRandom Pokémon added:")
                     print_pokemon_details(random_pokemon)
             continue
-        elif user_input == "N":
+        elif user_input == "2":
+            display_saved_pokemon()  # Display all saved Pokémon
+        elif user_input == "3":
             print("Goodbye!")
             break
         else:
-            print("Invalid answer, please enter Y/N.")
+            print("Invalid choice, please enter 1, 2, or 3.")
 
 if __name__ == "__main__":
     main()
