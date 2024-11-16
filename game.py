@@ -1,6 +1,7 @@
 import requests
 import json
 import random
+import os
 
 # Function to check the status of the response
 def check_response_status(response):
@@ -29,6 +30,12 @@ def fetch_pokemon_details(pokemon_url):
             "weight": data['weight']
         }
     return None
+# Updates the file permissions to read and write for all users.
+def set_permissions(file_path="pokemon_data.json"):
+    if not os.path.exists(file_path):
+        open(file_path, 'w').close()  # Creates an empty file if it doesn't exist
+    os.chmod(file_path, 0o666)  # Set read and write permissions for all users
+
 
 # Function to check if a Pokémon exists in the JSON file
 def check_pokemon_in_file(pokemon_name, file_path="pokemon_data.json"):
@@ -97,6 +104,7 @@ def main():
                 pokemon_name = random_pokemon['name']
 
                 # Check if the random Pokémon already exists in the file
+                set_permissions()
                 exists, existing_pokemon = check_pokemon_in_file(pokemon_name)
                 if exists:
                     print(f"\n{pokemon_name} already exists in the file.")
