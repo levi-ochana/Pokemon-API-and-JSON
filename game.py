@@ -2,7 +2,9 @@ import requests
 import json
 import random
 import os
-from pokemon_utils import fetch_pokemon_list, fetch_pokemon_details, check_pokemon_in_file, save_pokemon_to_file, set_permissions, print_pokemon_details, display_saved_pokemon
+from view_pokemons import fetch_pokemon_list, fetch_pokemon_details, check_pokemon_in_file, save_pokemon_to_file, set_permissions, print_pokemon_details, display_saved_pokemon, check_response_status
+
+
 
 # Main function to run the game
 def main():
