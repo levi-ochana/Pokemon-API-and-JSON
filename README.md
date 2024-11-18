@@ -35,7 +35,6 @@ This project allows users to interact with Pokémon data from the PokeAPI. The a
 
 ## How to Run
 
-### Game
 1. Clone the repository:
    ```bash
    git clone https://github.com/levi-ochana/Pokemon-API-and-JSON.git
