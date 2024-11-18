@@ -1,9 +1,7 @@
+import requests
 import json
 import random
-import requests
 import os
-
-
 
 def check_response_status(response):
     if response.status_code == 200:
@@ -11,7 +9,6 @@ def check_response_status(response):
     else:
         print(f"Error getting data: {response.status_code}")
         return None
-
 
 # Function to fetch a list of Pokémon
 def fetch_pokemon_list(limit=5):
@@ -34,13 +31,18 @@ def fetch_pokemon_details(pokemon_url):
     return None
 
 # Updates the file permissions to read and write for all users.
-def set_permissions(file_path="pokemon_data.json"):
-    if not os.path.exists(file_path):
-        open(file_path, 'w').close()  # Creates an empty file if it doesn't exist
-    os.chmod(file_path, 0o666)  # Set read and write permissions for all users
+def set_permissions(file_path=os.path.join(os.path.expanduser("~"), "pokemon_data.json")):
+    try:
+        # If the file doesn't exist, create it
+        if not os.path.exists(file_path):
+            open(file_path, 'w').close()  # Creates an empty file if it doesn't exist
+        os.chmod(file_path, 0o666)  # Grant read and write permissions to all users
+        print(f"File {file_path} is ready and accessible.")
+    except PermissionError as e:
+        print(f"Permission denied: Unable to create or modify the file {file_path}. Error: {e}")
 
 # Function to check if a Pokémon exists in the JSON file
-def check_pokemon_in_file(pokemon_name, file_path="pokemon_data.json"):
+def check_pokemon_in_file(pokemon_name, file_path="/tmp/pokemon_data.json"):
     try:
         with open(file_path, 'r') as file:
             # If the file is empty, return False immediately
@@ -60,9 +62,7 @@ def check_pokemon_in_file(pokemon_name, file_path="pokemon_data.json"):
         return False, None
 
 # Function to save Pokémon details to a JSON file
-def save_pokemon_to_file(pokemon):
-    file_path = 'saved_pokemons.json'
-    
+def save_pokemon_to_file(pokemon, file_path="/tmp/saved_pokemons.json"):
     # If the file doesn't exist, initialize it
     if not os.path.exists(file_path):
         with open(file_path, 'w') as file:
@@ -81,15 +81,13 @@ def save_pokemon_to_file(pokemon):
     # Save the updated data
     with open(file_path, 'w') as file:
         json.dump(pokemon_data, file, indent=4)
-        
+
 # Function to print Pokémon details
 def print_pokemon_details(pokemon):
     print(f"Name: {pokemon['name']}, Height: {pokemon['height']}, Weight: {pokemon['weight']}")
 
 # Function to display all saved Pokémon
-def display_saved_pokemon():
-    file_path = 'saved_pokemons.json'
-
+def display_saved_pokemon(file_path="/tmp/saved_pokemons.json"):
     # Check if the file exists
     if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
         print("No saved Pokémon.")
